@@ -68,7 +68,7 @@ where
         let cookies: Option<TypedHeader<headers::Cookie>> =
             req.extract().await.expect("cookie extraction failed.");
         let session_cookie = cookies.as_ref().and_then(|cookie| cookie.get(COOKIE_NAME));
-
+        println!("Session cookie: {:?}", session_cookie);
         match session_cookie {
             Some(session) => Self::from_authorization(&state.redis, session).await,
             None => Err(Error::Unauthorized),
@@ -96,7 +96,8 @@ where
             Some(session) => match AuthUser::from_authorization(&state.redis, session).await {
                 Ok(user) => {
                     println!("logined user: {:?}", user);
-                    Ok(Self(Some(user)))},
+                    Ok(Self(Some(user)))
+                }
                 Err(_) => Ok(Self(None)),
             },
             None => Ok(Self(None)),
