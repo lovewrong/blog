@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="/static/assets/css/style.css">
+    <title>{% block title %}{% endblock title %} - blog</title>
+    {% endblock head %}
+</head>
+
+<body>
+    <div id="header">
+        <a href="/">index</a>
+        {% if user %}
+        <a href="/user">{{ user.user_id }}</a>
+        <a href="/user/logout_action">logout</a>
+        {% else %}
+        <a href="/login">login</a>
+        {% endif %}
+    </div>
+    <div id="content">{% block content %}{% endblock content %}</div>
+    <div id="footer">
+        {% block footer %}
+        &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
+        {% endblock footer %}
+    </div>
+</body>
+
+</html>

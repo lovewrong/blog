@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Add new article{% endblock title %}
+{% block content %}
+<h1>Index</h1>
+<p class="important">
+    Welcome to my awesome homepage.
+</p>
+<form action="/article" method="post">
+    <label for="name">
+        title:
+        <input type="text" name="title">
+    </label>
+    <label>
+        description:
+        <input type="text" name="description">
+    </label>
+    <label>
+        content:
+        <input type="text" name="content">
+    </label>
+    <input type="submit" value="Subscribe!">
+</form>
+{% endblock content %}

@@ -1,0 +1,26 @@
+[package]
+name = "blog"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum ={ version = "0.5.16", features = ["headers"] }
+tokio = { version = "1.21.1", features = ["full"] }
+tracing = "0.1.36"
+tracing-subscriber = "0.3.15"
+serde = { version = "1.0.145", features = ["derive"] }
+serde_json = "1.0"
+sqlx = {version = "0.6", features = ["postgres", "runtime-tokio-rustls", "macros", "chrono", "uuid"]}
+dotenvy = "0.15.5"
+thiserror = "1"
+anyhow = "1"
+tera = "1.17.1"
+tower-http = { version = "0.3.4", features = ["fs", "trace"] }
+uuid = {version = "1.1.2", features = ["serde"]}
+chrono = {version = "0.4.19", features = ["serde"]}
+itertools = "0.10.5"
+redis = { version = "0.21", features = ["tokio-comp", "aio"] }
+argon2 = {version = "0.4", features = ["std"]}
+rand_core = { version = "0.6", features = ["std"] }

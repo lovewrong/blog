@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}login{% endblock title %}
+{% block content %}
+<h3>login</h3>
+<form action="/user/login_action" method="post">
+    <label for="name">
+        email:
+        <input type="text" name="email">
+    </label>
+    <label>
+        password:
+        <input type="text" name="password">
+    </label>
+    <input type="submit" value="login!">
+</form>
+
+<h3>register</h3>
+<form action="/user/register_action" method="post">
+    <label for="username">
+        username:
+        <input type="text" name="username">
+    </label>
+    <label for="name">
+        email:
+        <input type="text" name="email">
+    </label>
+    <label>
+        password:
+        <input type="text" name="password">
+    </label>
+    <input type="submit" value="register!">
+</form>
+{% endblock content %}
