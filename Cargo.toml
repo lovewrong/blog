@@ -24,3 +24,5 @@ itertools = "0.10.5"
 redis = { version = "0.21", features = ["tokio-comp", "aio"] }
 argon2 = {version = "0.4", features = ["std"]}
 rand_core = { version = "0.6", features = ["std"] }
+base64 = "0.13.0"
+rand = "0.8.4"

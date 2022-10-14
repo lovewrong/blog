@@ -12,7 +12,7 @@
     <div id="header">
         <a href="/">index</a>
         {% if user %}
-        <a href="/user">{{ user.user_id }}</a>
+        <a href="/user">{{ user.username }}</a>
         <a href="/logout">logout</a>
         {% else %}
         <a href="/login">login</a>
@@ -21,7 +21,9 @@
     <div id="content">{% block content %}{% endblock content %}</div>
     <div id="footer">
         {% block footer %}
-        &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
+        <p>Power for <a href="https://github.com/tokio-rs/axum" target="_blank" rel="noopener noreferrer">Rust and
+                axum</a>
+        </p>
         {% endblock footer %}
     </div>
 </body>

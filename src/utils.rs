@@ -4,6 +4,7 @@ use argon2::{
     Argon2,
 };
 use itertools::Itertools;
+use rand_core::RngCore;
 
 use crate::{Error, Result};
 
@@ -39,23 +40,6 @@ pub fn markdown_to_html(_markdown: &str) -> String {
     todo!()
 }
 
-// pub fn hash(pwd: &str) -> Result<String> {
-//     let salt = SaltString::generate(&mut OsRng);
-//     let argon2 = Argon2::default();
-//     Ok(argon2.hash_password(pwd.as_bytes(), &salt)?.to_string())
-// }
-
-// pub fn verify(pwd: &str, hashed_pwd: &str) -> Result<()> {
-//     tracing::info!("verify start");
-//     let pwd_hash = PasswordHash::new(hashed_pwd)?;
-//     tracing::info!("verify step 1");
-//     let argon2 = Argon2::default();
-//     tracing::info!("verify step 2");
-//     let r = argon2.verify_password(pwd.as_bytes(), &pwd_hash)?;
-//     tracing::info!("verify end");
-//     Ok(r)
-// }
-
 pub async fn hash_password(password: String) -> Result<String> {
     // Argon2 hashing is designed to be computationally intensive,
     // so we need to do this on a blocking thread.
@@ -85,4 +69,10 @@ pub async fn verify_password(password: String, password_hash: String) -> Result<
     })
     .await
     .context("panic in verifying password hash")??)
+}
+
+pub fn generate_string() -> String {
+    let mut key = vec![0u8; 16];
+    rand::thread_rng().fill_bytes(&mut key);
+    base64::encode(key)
 }

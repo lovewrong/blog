@@ -17,16 +17,15 @@ pub struct User {
     pub updated_at: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug)]
-pub enum UserGroups {
-    Admin,
-    User,
-    Visitor,
-}
-
 #[derive(Debug, Deserialize)]
 pub struct CreateUser {
     pub username: String,
+    pub email: String,
+    pub password: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct LoginUser {
     pub email: String,
     pub password: String,
 }
@@ -38,10 +37,3 @@ pub struct UserOptions {
     pub option_name: String,
     pub option_value: Option<String>,
 }
-
-#[derive(Debug, Deserialize)]
-pub struct LoginUser {
-    pub email: String,
-    pub password: String,
-}
-

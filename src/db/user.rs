@@ -9,9 +9,7 @@ pub async fn get_user_by_email(pool: &PgPool, user: LoginUser) -> Result<User> {
         .fetch_optional(pool)
         .await?
         .ok_or(Error::unprocessable_entity([("email", "does not exist")]))?;
-    tracing::info!("Verifying password_hasher");
     verify_password(user.password, row.password_hash.clone()).await?;
-    tracing::info!("Verifying password_hasher");
     Ok(row)
 }
 

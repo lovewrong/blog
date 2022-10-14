@@ -4,9 +4,8 @@ use axum::extract::Extension;
 use axum::response::{Html, IntoResponse};
 use axum::routing::{get, Router};
 use tera::{Context, Tera};
-use tracing::info;
 
-use crate::extractor::MaybeAuthUser;
+use crate::auth::OptionalAuthUser;
 use crate::{AppState, Result};
 
 pub fn router() -> Router {
@@ -16,14 +15,13 @@ pub fn router() -> Router {
 }
 
 async fn index(
-    user: MaybeAuthUser,
+    auth: OptionalAuthUser,
     Extension(tera): Extension<Tera>,
     Extension(_app_state): Extension<Arc<AppState>>,
 ) -> Result<impl IntoResponse> {
-    info!("index");
-    println!("user: {:?}", user);
     let mut context = Context::new();
-    if let MaybeAuthUser(Some(user)) = user {
+
+    if let OptionalAuthUser(Some(user)) = auth {
         context.insert("user", &user);
     }
     Ok(Html(tera.render("index.html", &context)?))

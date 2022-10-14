@@ -3,9 +3,10 @@ use std::sync::Arc;
 use axum::extract::{Extension, Form};
 use axum::response::{IntoResponse, Redirect};
 use axum::routing::{get, post, Router};
+use axum::{headers, TypedHeader};
 
+use crate::auth::{AuthUser, OptionalAuthUser, COOKIE_NAME};
 use crate::db::user;
-use crate::extractor::{AuthUser, MaybeAuthUser, COOKIE_NAME};
 use crate::handlers::set_cookie;
 use crate::models::users::{CreateUser, LoginUser};
 use crate::{AppState, Result};
@@ -22,10 +23,9 @@ async fn register(
     Extension(app_state): Extension<Arc<AppState>>,
 ) -> Result<impl IntoResponse> {
     let user = user::post_new_user(&app_state.db, form).await?;
-
-    let auth_user = AuthUser::new(user.user_id);
-    auth_user.to_redis(&app_state.redis).await?;
-    let headers = set_cookie(COOKIE_NAME, &auth_user.user_id.to_string());
+    let session: AuthUser = user.into();
+    let key = session.storage(&app_state.redis).await?;
+    let headers = set_cookie(COOKIE_NAME, &key);
 
     Ok((headers, Redirect::to("/")))
 }
@@ -35,19 +35,23 @@ async fn login(
     Extension(app_state): Extension<Arc<AppState>>,
 ) -> Result<impl IntoResponse> {
     let user = user::get_user_by_email(&app_state.db, form).await?;
-    let auth_user = AuthUser::new(user.user_id);
-    auth_user.to_redis(&app_state.redis).await?;
-    let headers = set_cookie(COOKIE_NAME, &auth_user.user_id.to_string());
+    let session: AuthUser = user.into();
+    let key = session.storage(&app_state.redis).await?;
+    let headers = set_cookie(COOKIE_NAME, &key);
+
     Ok((headers, Redirect::to("/")))
 }
 
 async fn logout(
-    user: MaybeAuthUser,
+    user: OptionalAuthUser,
+    TypedHeader(cookie): TypedHeader<headers::Cookie>,
     Extension(app_state): Extension<Arc<AppState>>,
 ) -> Result<impl IntoResponse> {
-    if let MaybeAuthUser(Some(user)) = user {
-        user.remove(&app_state.redis).await?;
+    if let OptionalAuthUser(Some(_user)) = user {
+        let key = cookie.get(COOKIE_NAME).expect("Invalid cookie");
+        AuthUser::remove(&app_state.redis, key).await?;
     }
     let headers = set_cookie(COOKIE_NAME, "");
+
     Ok((headers, Redirect::to("/")))
 }

@@ -1,8 +1,6 @@
-use std::str::FromStr;
-
 use sqlx::postgres::PgPool;
-use uuid::Uuid;
 
+use crate::auth::AuthUser;
 use crate::models::articles::{Article, CreateArticle};
 use crate::utils::slugify;
 use crate::{Error, Result};
@@ -26,12 +24,9 @@ pub async fn get_article_details_for_db(pool: &PgPool, slug: &str) -> Result<Art
     }
 }
 
-pub async fn post_new_article_db(pool: &PgPool, article: CreateArticle) -> Result<Article> {
-    let fake_uuid = Uuid::from_str("DE6B9A6D-72F8-3DEC-1A1C-40B27F76311B").unwrap();
-
+pub async fn post_new_article_db(pool: &PgPool, user: AuthUser, article: CreateArticle) -> Result<Article> {
+    let user_id = user.user_id;
     let slug = slugify(&article.title);
-
-    // fake
     let html = String::new();
 
     let row = sqlx::query_as!(Article,
@@ -39,7 +34,7 @@ pub async fn post_new_article_db(pool: &PgPool, article: CreateArticle) -> Resul
     (user_id, slug, title, description, content, html)
     VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING article_id, user_id, slug, title, description, content, html, views, comment_count, allow_comment, created_at, updated_at"#,
-    fake_uuid, 
+    user_id, 
     slug, 
     article.title, 
     article.description, 

@@ -72,7 +72,6 @@ pub enum Error {
 
     // #[error("Wrong email or password")]
     // Argon2Error(#[from] argon2::password_hash::Error),
-
     /// Return `500 Internal Server Error` on a `anyhow::Error`.
     ///
     /// `anyhow::Error` is used in a few places to capture context and backtraces
@@ -114,7 +113,7 @@ impl Error {
 
     fn status_code(&self) -> StatusCode {
         match self {
-            Self::Unauthorized  => StatusCode::UNAUTHORIZED,
+            Self::Unauthorized => StatusCode::UNAUTHORIZED,
             Self::Forbidden => StatusCode::FORBIDDEN,
             Self::NotFound => StatusCode::NOT_FOUND,
             Self::UnprocessableEntity { .. } => StatusCode::UNPROCESSABLE_ENTITY,

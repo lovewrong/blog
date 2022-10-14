@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Articles{% endblock title %}
 {% block content %}
-<h3><a href="add"></a>add article</h3>
+{% if user %}
+<h3><a href="/article"></a>new article</h3>
+{% endif %}
+
 {% for article in articles %}
-<li><a href="http://">{{ article.title }}</a></li>
+<li>
+    <a href="/article/{{ article.slug }}">{{ article.title }}</a>
+    <p>{{ article.description }}</p>
+    <p>{{ article.created_at }}</p>
+</li>
 {% endfor %}
 {% endblock content %}
