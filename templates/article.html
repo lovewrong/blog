@@ -1,9 +1,20 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 {% block title %}{{ article.title }}{% endblock title %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="/static/assets/css/atom-one-light.min.css">
+<script src="/static/assets/js/highlight.min.js"></script>
+{% endblock head %}
 {% block content %}
-<h1>
-    <title>{{ article.title }}</title>
-</h1>
-<p>description: {{ article.description }}</p>
-<p>content: {{ article.content }}</p>
+<h1>{{ article.title }}</h1>
+<h3>description: {{ article.description }}</h3>
+
+{% if current_user.user_id and current_user.user_id == article.user_id %}
+<li><a href="/">edit</a></li>
+<li><a href="/article/remove/{{ article.article_id }}">remove</a></li>
+{% endif %}
+<div class="content">
+    {{ article.html | safe }}
+</div>
+<script>hljs.highlightAll();</script>
 {% endblock content %}

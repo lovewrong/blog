@@ -35,3 +35,11 @@ impl CreateArticle {
         }
     }
 }
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateArticle {
+    pub article_id: Uuid,
+    pub title: String,
+    pub description: String,
+    pub content: String
+}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ user.username }}{% endblock title %}
+{% block content %}
+<h1>User</h1>
+<h3>{{ user.username }}</h3>
+{% if edit %}
+<a href="/edit/">edit</a>
+{% endif %}
+{% endblock content %}

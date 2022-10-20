@@ -4,6 +4,7 @@ use axum::extract::{Extension, Form, Path};
 use axum::response::{Html, IntoResponse, Redirect};
 use axum::routing::{get, Router};
 use tera::{Context, Tera};
+use uuid::Uuid;
 
 use crate::auth::{AuthUser, OptionalAuthUser};
 use crate::db::articles;
@@ -15,6 +16,7 @@ pub fn router() -> Router {
         .route("/article", get(new_article).post(post_new_article))
         .route("/article/:sulg", get(get_article_details))
         .route("/articles", get(get_articles))
+        .route("/article/remove/:id", get(remove_article))
 }
 
 async fn get_article_details(
@@ -27,7 +29,7 @@ async fn get_article_details(
 
     let mut context = Context::new();
     if let OptionalAuthUser(Some(user)) = auth {
-        context.insert("user", &user);
+        context.insert("current_user", &user);
     }
     context.insert("article", &article);
 
@@ -47,7 +49,7 @@ async fn post_new_article(
     Extension(app_state): Extension<Arc<AppState>>,
 ) -> Result<impl IntoResponse> {
     let article = articles::post_new_article_db(&app_state.db, user, article).await?;
-    let article_url = format!("/article/{}", article.article_id);
+    let article_url = format!("/article/{}", article.slug);
     Ok(Redirect::to(&article_url))
 }
 
@@ -60,9 +62,15 @@ async fn get_articles(
 
     let mut context = Context::new();
     if let OptionalAuthUser(Some(user)) = auth {
-        context.insert("user", &user);
+        context.insert("current_user", &user);
     }
     context.insert("articles", &articles);
 
     Ok(Html(tera.render("articles.html", &context)?))
+}
+
+async fn remove_article(auth: AuthUser, Path(id): Path<Uuid>, Extension(app_state): Extension<Arc<AppState>>) -> Result<impl IntoResponse> {
+    articles::remove_article(&app_state.db, auth, id).await?;
+    Ok(Redirect::to("/articles"))
+    // TODO: redirect to article page
 }

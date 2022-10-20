@@ -22,7 +22,7 @@ async fn index(
     let mut context = Context::new();
 
     if let OptionalAuthUser(Some(user)) = auth {
-        context.insert("user", &user);
+        context.insert("current_user", &user);
     }
     Ok(Html(tera.render("index.html", &context)?))
 }

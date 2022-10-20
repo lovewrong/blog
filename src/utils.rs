@@ -4,6 +4,7 @@ use argon2::{
     Argon2,
 };
 use itertools::Itertools;
+use pulldown_cmark::{html, Options, Parser};
 use rand_core::RngCore;
 
 use crate::{Error, Result};
@@ -36,8 +37,11 @@ pub fn slugify(string: &str) -> String {
         .join("-")
 }
 
-pub fn markdown_to_html(_markdown: &str) -> String {
-    todo!()
+pub fn markdown_to_html(markdown: &str) -> String {
+    let parser = Parser::new_ext(markdown, Options::all());
+    let mut html = String::new();
+    html::push_html(&mut html, parser);
+    html
 }
 
 pub async fn hash_password(password: String) -> Result<String> {

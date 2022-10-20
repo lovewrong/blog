@@ -8,7 +8,7 @@ use crate::utils::generate_string;
 use crate::{Error, Result};
 
 pub const COOKIE_NAME: &'static str = "session";
-const COOKIE_LIFETIME: usize = 7 * 24 * 60 * 60;
+pub const COOKIE_LIFETIME: usize = 7 * 24 * 60 * 60;
 
 #[derive(Debug)]
 pub struct OptionalAuthUser(pub Option<AuthUser>);

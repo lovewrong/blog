@@ -11,8 +11,8 @@
 <body>
     <div id="header">
         <a href="/">index</a>
-        {% if user %}
-        <a href="/user">{{ user.username }}</a>
+        {% if current_user %}
+        <a href="/user/{{ current_user.username }}">{{ current_user.username }}</a>
         <a href="/logout">logout</a>
         {% else %}
         <a href="/login">login</a>

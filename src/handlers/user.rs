@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
-use axum::extract::{Extension, Form};
-use axum::response::{IntoResponse, Redirect};
+use axum::extract::{Extension, Form, Path};
+use axum::response::{Html, IntoResponse, Redirect};
 use axum::routing::{get, post, Router};
 use axum::{headers, TypedHeader};
+use tera::{Context, Tera};
 
 use crate::auth::{AuthUser, OptionalAuthUser, COOKIE_NAME};
 use crate::db::user;
@@ -16,6 +17,7 @@ pub fn router() -> Router {
         .route("/register", post(register))
         .route("/login", post(login))
         .route("/logout", get(logout))
+        .route("/user/:username", get(user_details))
 }
 
 async fn register(
@@ -54,4 +56,23 @@ async fn logout(
     let headers = set_cookie(COOKIE_NAME, "");
 
     Ok((headers, Redirect::to("/")))
+}
+
+async fn user_details(
+    user: OptionalAuthUser,
+    Path(username): Path<String>,
+    Extension(app_state): Extension<Arc<AppState>>,
+    Extension(tera): Extension<Tera>,
+) -> Result<impl IntoResponse> {
+    let mut context = Context::new();
+    if let OptionalAuthUser(Some(user)) = user {
+        context.insert("current_user", &user);
+        if user.username == username {
+            context.insert("edit", &username)
+        }
+    }
+    let user = user::get_user_details_by_username(&app_state.db, username).await?;
+    context.insert("user", &user);
+
+    Ok(Html(tera.render("user.html", &context)?))
 }
