@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 use uuid::Uuid;
 
+// use crate::utils::empty_string_as_none;
+
 #[derive(Debug, FromRow, Serialize)]
 pub struct Article {
     pub article_id: Uuid,
@@ -41,5 +43,12 @@ pub struct UpdateArticle {
     pub article_id: Uuid,
     pub title: String,
     pub description: String,
-    pub content: String
+    pub content: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Params {
+    // #[serde(default, deserialize_with = "empty_string_as_none")]
+    pub page: Option<i64>,
+    pub limit: Option<i64>,
 }

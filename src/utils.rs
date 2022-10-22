@@ -1,3 +1,5 @@
+use std::{str::FromStr, fmt};
+
 use anyhow::Context;
 use argon2::{
     password_hash::{rand_core::OsRng, PasswordHash, PasswordHasher, PasswordVerifier, SaltString},
@@ -6,6 +8,7 @@ use argon2::{
 use itertools::Itertools;
 use pulldown_cmark::{html, Options, Parser};
 use rand_core::RngCore;
+use serde::{Deserializer, Deserialize, de};
 
 use crate::{Error, Result};
 
@@ -79,4 +82,18 @@ pub fn generate_string() -> String {
     let mut key = vec![0u8; 16];
     rand::thread_rng().fill_bytes(&mut key);
     base64::encode(key)
+}
+
+/// Serde deserialization decorator to map empty Strings to None,
+pub fn empty_string_as_none<'de, D, T>(de: D) -> Result<Option<T>, D::Error>
+where
+    D: Deserializer<'de>,
+    T: FromStr,
+    T::Err: fmt::Display,
+{
+    let opt = Option::<String>::deserialize(de)?;
+    match opt.as_deref() {
+        None | Some("") => Ok(None),
+        Some(s) => FromStr::from_str(s).map_err(de::Error::custom).map(Some),
+    }
 }

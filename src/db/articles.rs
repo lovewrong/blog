@@ -6,6 +6,12 @@ use crate::models::articles::{Article, CreateArticle};
 use crate::utils::{slugify, markdown_to_html};
 use crate::{Error, Result};
 
+pub async fn get_articles_by_page(pool: &PgPool, limit: i64, offset: i64) -> Result<Vec<Article>> {
+    let rows = sqlx::query_as!(Article, "select * from articles order by created_at desc limit $1 offset $2",
+                    limit, offset).fetch_all(pool).await?;
+    Ok(rows)
+}
+
 pub async fn get_all_article_for_db(pool: &PgPool) -> Result<Vec<Article>> {
     let rows = sqlx::query_as!(Article, "SELECT * FROM articles")
         .fetch_all(pool)
