@@ -2,7 +2,7 @@ use sqlx::postgres::PgPoolOptions;
 use tera::Tera;
 
 use blog::config::Config;
-use blog::server;
+use blog::serve;
 use blog::AppState;
 
 #[tokio::main]
@@ -17,6 +17,6 @@ async fn main() -> anyhow::Result<()> {
     let app_state = AppState { db, redis };
 
     tracing::info!("listening on {}", &config.web_address);
-    server::run(&config.web_address, app_state, tera).await?;
+    serve::run(&config.web_address, app_state, tera).await?;
     Ok(())
 }

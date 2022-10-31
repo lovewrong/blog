@@ -5,7 +5,7 @@ pub mod error;
 pub mod extractor;
 pub mod handlers;
 pub mod models;
-pub mod server;
+pub mod serve;
 pub mod utils;
 
 use redis::Client;

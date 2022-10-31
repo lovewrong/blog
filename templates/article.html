@@ -16,5 +16,21 @@
 <div class="content">
     {{ article.html | safe }}
 </div>
+<div class="comment">
+    {% for comment in comments %}
+    <li>
+        <p>{{ comment.content }}</p>
+        <p>{{ comment.created_at }}</p>
+    </li>
+    {% endfor %}
+
+    <form action="/comment/{{ article.article_id }}/{{ article.slug }}" method="post">
+        <label>
+            content:
+            <textarea name="content" id="" cols="30" rows="10"></textarea>
+        </label>
+        <input type="submit" value="Subscribe!">
+    </form>
+</div>
 <script>hljs.highlightAll();</script>
 {% endblock content %}
